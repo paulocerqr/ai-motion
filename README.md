@@ -70,7 +70,29 @@ docs/                      imagens do README
 
 No Linux com NVIDIA, a exportação 3D usa ANGLE `gl-egl`, e não Vulkan, porque o Vulkan quebrava os shaders do three.js. O ajuste está em `.claude/skills/animate/tools/gpu.mjs`.
 
-## Como gerar um vídeo
+## Criar um vídeo novo com o Claude Code
+
+O [`CLAUDE.md`](CLAUDE.md) guarda os padrões do projeto e é carregado automaticamente em todo chat aberto nesta pasta. Ele define:
+
+- o formato e as legendas;
+- a voz clonada a 1.4x;
+- que não há música de fundo e os impactos de conclusão são suaves;
+- quais peças servem de modelo;
+- os cuidados com a chave da API.
+
+Por isso, um chat novo, mesmo sem contexto, só precisa do tema:
+
+```
+/animate vídeo 3D sobre o motor a combustão
+```
+
+```
+/animate vídeo 2D explicativo sobre a fotossíntese, no estilo da mitose
+```
+
+O Claude segue a skill `animate`. Ele apresenta o roteiro, o look e o storyboard para aprovação antes de renderizar. Pedidos específicos também podem ir no prompt, por exemplo: "uns 40 s", "câmera mais próxima" ou "com música de fundo desta vez".
+
+## Como gerar um vídeo manualmente
 
 O áudio e os vídeos **não estão no repositório**. Para refazer uma peça:
 
