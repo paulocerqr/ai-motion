@@ -1,13 +1,15 @@
 """Generate one Cartesia TTS take per line of a piece's voice/script.json.
 
-usage: .venv/bin/python scripts/cartesia_voice.py pieces/<name> [--voice <id>] [--only id1,id2] [--speed 1.2] [--emotion excited]
+usage: .venv/bin/python scripts/cartesia_voice.py pieces/<name> [--only id1,id2] [--speed 1.2] [--regenerate] [--emotion excited]
 Reads CARTESIA_API from ~/.config/clip-ai/ai-motion.env (never printed).
 """
+import argparse
 import json
+import subprocess
+import tempfile
 import sys
 from pathlib import Path
 
-from cartesia import Cartesia
 
 ENV = Path.home() / ".config/clip-ai/ai-motion.env"
 VOICE_ID = "66d119d7-d752-46d0-acbf-23a582af1141"
@@ -22,34 +24,52 @@ def env_key(name: str) -> str:
     sys.exit(f"{name} not found in {ENV}")
 
 
-def opt(args, flag, default):
-    return args[args.index(flag) + 1] if flag in args else default
-
-
 def main():
-    args = sys.argv[1:]
-    piece = Path(args[0])
-    only = set(opt(args, "--only", "").split(",")) - {""}
-    speed = float(opt(args, "--speed", "1.2"))
-    emotion = opt(args, "--emotion", "excited")
-    voice = opt(args, "--voice", VOICE_ID)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("piece", type=Path)
+    parser.add_argument("--only", default="")
+    parser.add_argument("--speed", type=float, default=1.2)
+    parser.add_argument("--emotion", default="excited")
+    parser.add_argument("--regenerate", action="store_true", help="Replace saved original takes")
+    args = parser.parse_args()
+    piece = args.piece
+    only = set(args.only.split(",")) - {""}
     script = json.loads((piece / "voice/script.json").read_text())
-    client = Cartesia(api_key=env_key("CARTESIA_API"), base_url="https://api.cartesia.ai")
+    ids = {line["id"] for line in script["lines"]}
+    if only - ids:
+        parser.error(f"unknown line ids: {', '.join(sorted(only - ids))}")
+    client = None
     chars = 0
     for line in script["lines"]:
         if only and line["id"] not in only:
             continue
         out = piece / "voice" / line.get("file", f"{line['id']}.wav")
-        resp = client.tts.generate(
-            model_id=MODEL,
-            transcript=line["text"],
-            voice=voice,
-            language="pt",
-            output_format={"container": "wav", "encoding": "pcm_s16le", "sample_rate": 44100},
-            generation_config={"speed": speed, "volume": 1, "emotion": emotion},
-        )
-        resp.write_to_file(str(out))
-        chars += len(line["text"])
+        original = piece / "voice/takes-1x" / out.relative_to(piece / "voice")
+        original.parent.mkdir(parents=True, exist_ok=True)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        if args.regenerate or not original.exists():
+            if client is None:
+                from cartesia import Cartesia
+                client = Cartesia(api_key=env_key("CARTESIA_API"), base_url="https://api.cartesia.ai")
+            resp = client.tts.generate(
+                model_id=MODEL,
+                transcript=line["text"],
+                voice=VOICE_ID,
+                language="pt",
+                output_format={"container": "wav", "encoding": "pcm_s16le", "sample_rate": 44100},
+                generation_config={"speed": args.speed, "volume": 1, "emotion": args.emotion},
+            )
+            with tempfile.TemporaryDirectory(dir=original.parent) as tmp:
+                take = Path(tmp) / "take.wav"
+                resp.write_to_file(str(take))
+                take.replace(original)
+            chars += len(line["text"])
+        # Replace the prepared take only after ffmpeg succeeds.
+        with tempfile.TemporaryDirectory(dir=out.parent) as tmp:
+            ready = Path(tmp) / "ready.wav"
+            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(original),
+                            "-filter:a", "atempo=1.4", str(ready)], check=True)
+            ready.replace(out)
         print(f"ok {line['id']:10s} -> {out}")
     print(f"{chars} characters generated")
 

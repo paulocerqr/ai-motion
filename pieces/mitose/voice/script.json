@@ -2,12 +2,47 @@
   "lead": 1.0,
   "tail": 2.2,
   "lines": [
-    { "id": "open",     "file": "open.wav",     "text": "Como uma célula vira duas? Com a mitose.", "after": 0.5 },
-    { "id": "copy",     "file": "copy.wav",     "text": "Primeiro, ela copia todo o seu DNA.", "after": 0.45 },
-    { "id": "prophase", "file": "prophase.wav", "text": "Na prófase, o DNA se enrola em cromossomos, e o núcleo se desfaz.", "after": 0.45 },
-    { "id": "metaphase","file": "metaphase.wav","text": "Na metáfase, as fibras alinham cada cromossomo no meio da célula.", "after": 1.6 },
-    { "id": "anaphase", "file": "anaphase.wav", "text": "Na anáfase, as cópias se separam.", "after": 0.5 },
-    { "id": "telophase","file": "telophase.wav","text": "Na telófase, dois núcleos se formam, e a célula se divide.", "after": 0.5 },
-    { "id": "result",   "file": "result.wav",   "text": "Resultado: duas células idênticas, cada uma com os mesmos quarenta e seis cromossomos.", "after": 0.3 }
+    {
+      "id": "open",
+      "file": "open.wav",
+      "text": "Como uma célula vira duas? Com a mitose.",
+      "after": 0.357
+    },
+    {
+      "id": "copy",
+      "file": "copy.wav",
+      "text": "Primeiro, ela copia todo o seu DNA.",
+      "after": 0.321
+    },
+    {
+      "id": "prophase",
+      "file": "prophase.wav",
+      "text": "Na prófase, o DNA se enrola em cromossomos, e o núcleo se desfaz.",
+      "after": 0.321
+    },
+    {
+      "id": "metaphase",
+      "file": "metaphase.wav",
+      "text": "Na metáfase, as fibras alinham cada cromossomo no meio da célula.",
+      "after": 1.143
+    },
+    {
+      "id": "anaphase",
+      "file": "anaphase.wav",
+      "text": "Na anáfase, as cópias se separam.",
+      "after": 0.357
+    },
+    {
+      "id": "telophase",
+      "file": "telophase.wav",
+      "text": "Na telófase, dois núcleos se formam, e a célula se divide.",
+      "after": 0.357
+    },
+    {
+      "id": "result",
+      "file": "result.wav",
+      "text": "Resultado: duas células idênticas, cada uma com os mesmos quarenta e seis cromossomos.",
+      "after": 0.25
+    }
   ]
 }

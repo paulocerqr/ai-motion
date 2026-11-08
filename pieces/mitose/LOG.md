@@ -39,3 +39,11 @@
 - User: look approved ("esse estilo mais estático de explicação"), but subtitles were missing.
 - Replaced the bottom caption tag with in-canvas narration subtitles (`drawSubs` in src/scenes2.js): 1–3 words per chunk from `VOICE.lines[].words`, spoken word lit yellow, white Comic Neue Bold with ink outline, above the bottom safe zone. Driven by voice.json, so they follow a new voice take automatically.
 - Review: all PASS (text 0 cut-off/overlap, arc 6/6, −14.3 LUFS, dead beats 0).
+
+
+## Run 3 — alinhamento aos padrões atuais
+- Narração provisória substituída pela voz clonada do usuário, `sonic-3.6`, emoção `excited`; originais em `voice/takes-1x/` e falas aceleradas com `atempo=1.4`.
+- Pausas divididas uma única vez por 1.4, com mínimo de 0.25 s. Tempos recalculados com Whisper em português: 65/69 palavras reconhecidas, demais interpoladas; duração de 20.168 s.
+- Formato atualizado para 30 fps; música desligada, efeitos a -18 dB sob a voz e impacto final suavizado.
+- As revisões dos runs anteriores descrevem versões antigas. MP4 e revisão audiovisual completa precisam ser refeitos para esta versão.
+- Validação técnica: build passou e os 605 quadros foram desenhados no Chromium sem erros de JavaScript, em 1080×1920 a 30 fps. Isso não substitui a revisão audiovisual.

@@ -30,7 +30,7 @@ Cada peça aparece em cena com o nome em amarelo. É um 3D low-poly renderizado 
 | Peça | Estilo | Duração | Pasta |
 |---|---|---|---|
 | **Freio a disco** | 3D low-poly (three.js r159), estilo próprio `lowpoly3d` | 55 s | [`pieces/freio-disco`](pieces/freio-disco) |
-| **Mitose** | 2D recorte de papel (`cut-paper`) | ~28 s | [`pieces/mitose`](pieces/mitose) |
+| **Mitose** | 2D recorte de papel (`cut-paper`) | ~20 s | [`pieces/mitose`](pieces/mitose) |
 
 Cada pasta tem um `LOG.md` com as decisões, os problemas encontrados e o resultado da revisão.
 
@@ -97,10 +97,9 @@ O Claude segue a skill `animate`. Ele apresenta o roteiro, o look e o storyboard
 O áudio e os vídeos **não estão no repositório**. Para refazer uma peça:
 
 ```bash
-# 1. narração: uma take por fala, com a voz clonada
+# 1. narração: salva originais em takes-1x/ e prepara as falas em 1.4x
 .venv/bin/python scripts/cartesia_voice.py pieces/freio-disco --emotion excited
-#    (freio-disco: depois, acelerar cada take para 1.4x)
-#    ffmpeg -i fala.wav -filter:a atempo=1.4 fala-1.4x.wav
+#    Reutiliza originais existentes. Use --regenerate [--only id1,id2] para refazê-los.
 
 # 2. junta as falas e calcula o tempo de cada palavra (legendas)
 PATH=$PWD/.venv/bin:$PATH VO_LANG=pt node .claude/skills/animate/tools/voice.mjs pieces/freio-disco --model small
@@ -121,3 +120,7 @@ node .claude/skills/animate/tools/review.mjs pieces/freio-disco
 - Narração em 1.4x, acelerada com `atempo` do ffmpeg, porque a velocidade da Cartesia quase não muda essa voz.
 - Por enquanto, sem música de fundo: só efeitos sonoros, com impactos de conclusão suaves.
 - As referências de formato, como o canal *Desmontando o Mundo*, servem só como inspiração de formato e visual. O roteiro e os modelos 3D são originais.
+
+## Verificação do pipeline
+
+Execute `npm test` (Python 3, Node e ffmpeg). Os testes verificam preservação das takes em falhas, reutilização dos originais, alinhamento de palavras acentuadas e seleção do vídeo para a prévia legendada, sem chamar a Cartesia nem baixar modelos.

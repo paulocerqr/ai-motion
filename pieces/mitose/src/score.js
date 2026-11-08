@@ -1,8 +1,9 @@
   // =====================================================================
-  //  SCORE BODY — sits under the voice (piece.json voice.music = -12 dB). D major, thin early,
-  //  a rising drone in metaphase that stops dead (the silence), then the snap: the loudest hit.
+  //  SFX under the voice (-18 dB); the old musical score stays disabled.
   // =====================================================================
   const c = CU;
+  const MUSIC = false;
+  if (MUSIC) {
   to = 'm';
   pad(0.0, c.pro + 0.2, ['D3', 'A3', 'Fs4'], 0.03, { type: 'triangle', cut: 800, att: 0.6, rel: 0.3 });
   [['D4', 0], ['A4', E8]].forEach(([n, dt], i) => pluck(c.wake + dt, nz(n), 0.18, 0.1 - i * 0.1, 0.6, 2600, 0.35));   // the hero's motif: a rising fifth
@@ -19,11 +20,12 @@
   [['D4', 0], ['A4', E8], ['D5', E8 * 2]].forEach(([n, dt], i) => pluck(c.nuclei + dt, nz(n), 0.05, -0.2 + i * 0.2, 0.5, 2800, 0.35));
   [['D4', 0], ['A4', E8]].forEach(([n, dt], i) => { pluck(c.same + dt, nz(n), 0.06, -0.3, 0.6, 2600, 0.35); pluck(c.same + dt + 0.02, nz(n), 0.06, 0.3, 0.6, 2600, 0.35); });   // the motif, twice at once: two heroes
   chime(c.n46 + 0.3, [nz('D5'), nz('A5'), nz('Fs5')], 0.05, 0);
+  }
   to = 's';
   noiseHit(c.nucBreak, 0.5, 'bandpass', 2200, 0.8, 0.05, 0.2, 0.2, 900);   // paper tearing
   blip(c.condense + 0.5, 900, 1400, 0.08, 0.04, -0.4); blip(c.condense + 0.55, 900, 1400, 0.08, 0.04, 0.4);   // the centrosomes pop
   sweep(c.fibers - 0.1, c.fibers + 0.5, 0.008, 400, 1800, 0);
-  sub(c.snap, 0.9);
-  noiseHit(c.snap, 0.18, 'highpass', 2500, 0.7, 0.16, 0, 0.3);   // the crack
+  sub(c.snap, 0.12);
+  noiseHit(c.snap, 0.18, 'highpass', 2500, 0.7, 0.025, 0, 0.3);   // the crack
   sweep(c.furrow - 0.3, c.furrow + 0.85, 0.012, 1800, 500, 0);  // the pinch
   blip(c.n46, 700, 1100, 0.07, 0.04, -0.3); blip(c.n46 + 0.2, 700, 1100, 0.07, 0.04, 0.3);

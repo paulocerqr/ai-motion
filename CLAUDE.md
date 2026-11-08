@@ -20,9 +20,10 @@ Este projeto produz shorts explicativos verticais em português, feitos em códi
 - Narração com a voz clonada do usuário via `scripts/cartesia_voice.py` (voz "kauan dev", `sonic-3.6`, emoção `excited`).
   - **Use só essa voz.** Não use vozes de terceiros nem vozes de celebridades.
 - **Narração em 1.4x:** a velocidade da Cartesia quase não muda essa voz. Por isso:
-  1. guarde as takes originais em `voice/takes-1x/`;
-  2. gere `voice/<id>.wav` com `ffmpeg -filter:a atempo=1.4`, que mantém o tom;
-  3. divida os `after` do `voice/script.json` por 1.4 (mínimo de 0.25 s).
+  1. o script guarda as takes originais em `voice/takes-1x/`;
+  2. o script gera `voice/<id>.wav` com `ffmpeg -filter:a atempo=1.4`, que mantém o tom;
+  3. ao escrever um roteiro novo, divida os `after` do `voice/script.json` por 1.4 (mínimo de 0.25 s). Não divida novamente ao regenerar a voz.
+  - Originais existentes são reutilizados; `--regenerate [--only id1,id2]` solicita novas takes.
 - **Sem música de fundo por enquanto:** só efeitos sonoros (`const MUSIC = false` no `score.js`), com `voice.music` em −18 dB no `piece.json`.
 - **Impactos de "conclusão" suaves.** O kit normaliza o volume da trilha, então efeitos esparsos sem música ficam altos. Deixe-os baixos.
 - Referências externas (canais, vídeos) servem só como formato e visual. **O roteiro e os modelos são originais**: não copie texto nem material de outros.

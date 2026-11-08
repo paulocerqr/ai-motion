@@ -69,7 +69,7 @@ const wav = path.join(VDIR, 'voice.wav');
 fs.writeFileSync(wav, Buffer.concat([hdr, out]));
 
 // ---- word times: what the recogniser heard, matched to the script's words line by line
-const norm = (w) => w.toLowerCase().replace(/[^a-z0-9]/g, '');
+const norm = (w) => w.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
 let heard = null;
 const py = spawnSync(process.platform === 'win32' ? 'python' : 'python3', [path.join(HERE, 'voice_words.py'), wav, '--model', opt('--model', 'small.en')], { maxBuffer: 1 << 26 });
 if (py.status === 0) { try { heard = JSON.parse(py.stdout.toString().trim().split('\n').pop()); } catch { heard = null; } }
