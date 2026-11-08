@@ -1,0 +1,34 @@
+# --- dependências / ambientes
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# --- credenciais (a chave da Cartesia fica em ~/.config/clip-ai/ai-motion.env, fora do repo)
+.env
+*.env
+
+# --- clone de referência da skill (repositório próprio; a cópia usada está em .claude/skills/animate)
+vendor/animate/
+
+# --- saídas geradas (áudio, vídeo, frames, revisões) — reproduzíveis a partir do código
+*.wav
+*.mp3
+*.mp4
+*.webm
+pieces/*/frames/
+pieces/*/renders/
+pieces/*/review/
+pieces/*/voice/takes-*/
+pieces/*/index.html
+
+# imagens de check-in geradas pelo skill (mantém só o storyboard/board de cada peça)
+pieces/*/*.png
+!pieces/*/storyboard.png
+!pieces/*/board.png
+
+# --- sistema / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/

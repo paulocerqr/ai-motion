@@ -1,0 +1,2 @@
+cartesia==4.2.0          # narração (TTS com a voz clonada) — scripts/cartesia_voice.py
+faster-whisper==1.2.1    # tempo de cada palavra da narração (legendas) — skill animate, tools/voice_words.py
