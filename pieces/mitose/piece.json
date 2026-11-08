@@ -1,0 +1,27 @@
+{
+  "name": "mitose",
+  "title": "Mitose",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 24
+  },
+  "storyFormat": "locked-off build, voice-led (one cell on one stage; the process is the plot)",
+  "style": "cut-paper",
+  "voice": {
+    "file": "voice/voice.wav",
+    "music": -12
+  },
+  "review": {
+    "safe": {
+      "top": 240,
+      "bottom": 420,
+      "right": 140
+    },
+    "refs": {}
+  },
+  "scenes": [
+    "src/scenes.js",
+    "src/scenes2.js"
+  ]
+}

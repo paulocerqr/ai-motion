@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mitose</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1b1714; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { height: min(100vh, calc(100vw * 16 / 9)); width: auto; aspect-ratio: 9 / 16; display: block; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+"use strict";
+// =====================================================================
+//  MITOSE — 9:16, narrated (the voice is the clock: every cue comes from VOICE word times).
+//  One cell on one stage. The hero is one orange chromosome with a face: it copies itself, the copies are
+//  pulled apart (the snap, in the pause before "Na anáfase"), and each daughter cell leaves with one.
+//  The end is the start, changed: one cell -> two identical cells.
+// =====================================================================
+const FPS = 24, W = 1080, H = 1920;
+const BPM = 120, BEAT = 60 / BPM, E8 = BEAT / 2, E16 = BEAT / 4;
+const NFRAMES = Math.round(VOICE.duration * FPS);
+const DURATION = NFRAMES / FPS;
+const LOOP_T = DURATION;
+const SAFE = { top: 240, bottom: 420, right: 140 };
+const HAND = '"Comic Neue", "Ink Free", "Segoe Print", "Bradley Hand", "Chalkboard SE", "Comic Sans MS", sans-serif';
+const CX = 470;
+
+// ---- the voice: VL(id) a line, VW(id, word, n) when the n-th `word` of that line starts
+const VL = (id) => VOICE.lines.find((l) => l.id === id);
+const _nw = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, '');
+function VW(id, word, n = 1) {
+  const L = VL(id); let k = 0;
+  for (const w of L.words || []) if (_nw(w.w) === _nw(word) && ++k === n) return Math.max(L.t0 - 0.1, w.t0);
+  return L.t0;
+}
+
+// ---- cues (seconds), all from the voice
+const CU = {
+  wake: VW('open', 'mitose'),
+  dup: VW('copy', 'copia'),
+  dna: VW('copy', 'dna'),
+  pro: VL('prophase').t0,
+  condense: VW('prophase', 'enrola'),
+  nucBreak: VW('prophase', 'nucleo'),
+  meta: VL('metaphase').t0,
+  fibers: VW('metaphase', 'fibras'),
+  align: VW('metaphase', 'alinham'),
+  middle: VW('metaphase', 'meio'),
+  hush: VL('metaphase').t1 + 0.15,            // the silence starts
+  snap: VL('anaphase').t0 - 0.45,             // the payoff: in the pause, before the line that names it
+  ana: VL('anaphase').t0,
+  telo: VL('telophase').t0,
+  nuclei: VW('telophase', 'nucleos'),
+  furrow: VW('telophase', 'celula'),
+  result: VL('result').t0,
+  same: VW('result', 'identicas'),
+  n46: VW('result', 'quarenta'),
+};
+
+const ERA_LIST = [[0, DURATION, () => sceneCell()]];
+const BEATS_T = [
+  ['open', 0, CU.dup - 0.4, 'uma célula'],
+  ['copy', CU.dup - 0.4, CU.pro, 'o DNA é copiado'],
+  ['prophase', CU.pro, CU.meta, 'prófase'],
+  ['metaphase', CU.meta, CU.snap, 'metáfase + silêncio'],
+  ['anaphase', CU.snap, CU.telo, 'anáfase: o estalo'],
+  ['telophase', CU.telo, CU.result, 'telófase + divisão'],
+  ['result', CU.result, DURATION, 'duas células'],
+];
+const TIMELINE = {
+  width: W, height: H, fps: FPS, bpm: BPM, duration: DURATION, frames: NFRAMES, loop: LOOP_T, safe: SAFE,
+  format: 'locked-off',
+  shots: BEATS_T.map(([key, t0, t1, title], i) => ({ id: i + 1, key, era: 0, t0, t1, title })),
+  cuts: [],
+  morphs: [],
+  cues: CU,
+  acts: [
+    { name: '1 Interfase', role: 'build',   t0: 0, t1: CU.pro },
+    { name: '2 Prófase',   role: 'journey', t0: CU.pro, t1: CU.meta },
+    { name: '3 Metáfase',  role: 'peak',    t0: CU.meta, t1: CU.hush },
+    { name: '4 Silêncio',  role: 'silence', t0: CU.hush, t1: CU.snap },
+    { name: '5 Anáfase',   role: 'gift',    t0: CU.snap, t1: CU.telo },
+    { name: '6 Final',     role: 'goodbye', t0: CU.telo, t1: DURATION },
+  ],
+  board: [
+    { t: 2.2, title: 'uma célula, o herói dorme', sound: 'pad suave', next: 'acorda em "mitose"' },
+    { t: CU.dna + 0.3, title: 'close: o herói se copia', sound: 'pluck duplo', next: 'câmera recua' },
+    { t: CU.nucBreak + 0.5, title: 'prófase: núcleo se rasga', sound: 'papel rasgando', next: 'fibras crescem' },
+    { t: CU.middle + 0.4, title: 'metáfase: todos no meio', sound: 'drone sobe', next: 'silêncio' },
+    { t: CU.snap - 0.15, title: 'silêncio, tensão', sound: 'quase nada', next: 'ESTALO' },
+    { t: CU.snap + 0.9, title: 'anáfase: gêmeos se separam', sound: 'stab + sub (o mais alto)', next: 'células se alongam' },
+    { t: CU.furrow + 0.5, title: 'telófase: estrangula', sound: 'swish', next: 'duas células' },
+    { t: CU.n46 + 0.8, title: 'duas células idênticas', sound: 'acorde quente', next: 'fim' },
+  ],
+  narration: VOICE.lines.map((l) => ({ t0: l.t0, t1: l.t1, text: l.text })),
+};
+window.TIMELINE = TIMELINE;
