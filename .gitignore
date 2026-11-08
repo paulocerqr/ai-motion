@@ -16,19 +16,13 @@ vendor/animate/
 *.mp3
 *.mp4
 *.webm
-pieces/*/frames/
-pieces/*/renders/
-pieces/*/review/
-pieces/*/voice/takes-*/
-pieces/*/index.html
-
-# imagens de check-in geradas pelo skill (mantém só o storyboard/board de cada peça)
-pieces/*/*.png
-!pieces/*/storyboard.png
-!pieces/*/board.png
+pieces/*          # peças ficam locais (as já versionadas continuam rastreadas)
 
 # --- sistema / editor
 .DS_Store
 *.swp
 .idea/
 .vscode/
+
+# --- identidade do canal (avatar/banner): local, fora do repo
+branding/
