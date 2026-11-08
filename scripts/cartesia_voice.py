@@ -1,6 +1,6 @@
 """Generate one Cartesia TTS take per line of a piece's voice/script.json.
 
-usage: .venv/bin/python scripts/cartesia_voice.py pieces/<name> [--only id1,id2] [--speed 1.2] [--regenerate] [--emotion excited]
+usage: .venv/bin/python scripts/cartesia_voice.py pieces/<name> [--only id1,id2] [--speed 1.2] [--regenerate] [--emotion excited] [--tempo 1.4]
 Reads CARTESIA_API from ~/.config/clip-ai/ai-motion.env (never printed).
 """
 import argparse
@@ -30,6 +30,7 @@ def main():
     parser.add_argument("--only", default="")
     parser.add_argument("--speed", type=float, default=1.2)
     parser.add_argument("--emotion", default="excited")
+    parser.add_argument("--tempo", type=float, default=1.4, help="ffmpeg atempo applied to the takes (pitch kept)")
     parser.add_argument("--regenerate", action="store_true", help="Replace saved original takes")
     args = parser.parse_args()
     piece = args.piece
@@ -68,7 +69,7 @@ def main():
         with tempfile.TemporaryDirectory(dir=out.parent) as tmp:
             ready = Path(tmp) / "ready.wav"
             subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(original),
-                            "-filter:a", "atempo=1.4", str(ready)], check=True)
+                            "-filter:a", f"atempo={args.tempo}", str(ready)], check=True)
             ready.replace(out)
         print(f"ok {line['id']:10s} -> {out}")
     print(f"{chars} characters generated")
