@@ -16,7 +16,8 @@ vendor/animate/
 *.mp3
 *.mp4
 *.webm
-pieces/*          # peças ficam locais (as já versionadas continuam rastreadas)
+# peças ficam locais (as já versionadas continuam rastreadas)
+pieces/*
 
 # --- sistema / editor
 .DS_Store
