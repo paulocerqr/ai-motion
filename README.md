@@ -31,6 +31,7 @@ Cada peça aparece em cena com o nome em amarelo. É um 3D low-poly renderizado 
 |---|---|---|---|
 | **Freio a disco** | 3D low-poly (three.js r159), estilo próprio `lowpoly3d` | 55 s | [`pieces/freio-disco`](pieces/freio-disco) |
 | **Mitose** | 2D recorte de papel (`cut-paper`) | ~20 s | [`pieces/mitose`](pieces/mitose) |
+| **Abrigo nuclear** | 3D low-poly, abrigo montado peça por peça em corte | 59,8 s | [`pieces/abrigo-nuclear`](pieces/abrigo-nuclear) |
 
 Cada pasta tem um `LOG.md` com as decisões, os problemas encontrados e o resultado da revisão.
 
@@ -75,7 +76,7 @@ No Linux com NVIDIA, a exportação 3D usa ANGLE `gl-egl`, e não Vulkan, porque
 O [`CLAUDE.md`](CLAUDE.md) guarda os padrões do projeto e é carregado automaticamente em todo chat aberto nesta pasta. Ele define:
 
 - o formato e as legendas;
-- a voz clonada a 1.4x;
+- a voz clonada (emoção `content`, acelerada para 1.2x);
 - que não há música de fundo e os impactos de conclusão são suaves;
 - quais peças servem de modelo;
 - os cuidados com a chave da API.
@@ -97,27 +98,31 @@ O Claude segue a skill `animate`. Ele apresenta o roteiro, o look e o storyboard
 O áudio e os vídeos **não estão no repositório**. Para refazer uma peça:
 
 ```bash
-# 1. narração: salva originais em takes-1x/ e prepara as falas em 1.4x
-.venv/bin/python scripts/cartesia_voice.py pieces/freio-disco --emotion excited
+# 1. narração: salva originais em takes-1x/ e prepara as falas aceleradas (--tempo)
+.venv/bin/python scripts/cartesia_voice.py pieces/abrigo-nuclear --emotion content --speed 1.0 --tempo 1.2
 #    Reutiliza originais existentes. Use --regenerate [--only id1,id2] para refazê-los.
 
 # 2. junta as falas e calcula o tempo de cada palavra (legendas)
-PATH=$PWD/.venv/bin:$PATH VO_LANG=pt node .claude/skills/animate/tools/voice.mjs pieces/freio-disco --model small
+PATH=$PWD/.venv/bin:$PATH VO_LANG=pt node .claude/skills/animate/tools/voice.mjs pieces/abrigo-nuclear --model small
 
 # 3. build → pieces/<nome>/index.html (abre no navegador para pré-visualizar)
-node .claude/skills/animate/tools/build.mjs pieces/freio-disco
+node .claude/skills/animate/tools/build.mjs pieces/abrigo-nuclear
 
 # 4. exporta → renders/final.mp4 e renders/share.mp4
-node .claude/skills/animate/tools/export.mjs pieces/freio-disco --share
+node .claude/skills/animate/tools/export.mjs pieces/abrigo-nuclear --share
 
 # 5. revisão automática (legendas na área segura, cortes, volume, ritmo...)
-node .claude/skills/animate/tools/review.mjs pieces/freio-disco
+node .claude/skills/animate/tools/review.mjs pieces/abrigo-nuclear
+
+# 6. thumbnail 9:16 para o Shorts → renders/thumbnail.jpg (configurada em piece.json → "thumbnail")
+node scripts/thumbnail.mjs pieces/abrigo-nuclear
 ```
 
 ## Preferências de produção
 
 - Formato vertical 9:16 e legendas palavra por palavra **sempre**.
-- Narração em 1.4x, acelerada com `atempo` do ffmpeg, porque a velocidade da Cartesia quase não muda essa voz.
+- Toda peça ganha uma **thumbnail 9:16** (1080×1920) para o YouTube Shorts: um quadro forte do próprio vídeo, sem legendas, com uma pergunta-gancho em branco e o tema em amarelo.
+- Narração com emoção `content`, acelerada para 1.2x com `atempo` do ffmpeg (a velocidade da Cartesia quase não muda essa voz). O freio a disco usou `excited` + 1.4x, que soou robotizado.
 - Por enquanto, sem música de fundo: só efeitos sonoros, com impactos de conclusão suaves.
 - As referências de formato, como o canal *Desmontando o Mundo*, servem só como inspiração de formato e visual. O roteiro e os modelos 3D são originais.
 
