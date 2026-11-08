@@ -1,0 +1,111 @@
+{
+ "lead": 0.8,
+ "tail": 2.4,
+ "lines": [
+  {
+   "id": "energy1",
+   "text": "Um carro a cem por hora carrega muita energia.",
+   "after": 0.25
+  },
+  {
+   "id": "energy2",
+   "text": "Pra parar, ela precisa ir pra algum lugar.",
+   "after": 0.25
+  },
+  {
+   "id": "disc1",
+   "text": "Então você prende na roda um disco de aço que gira junto com ela.",
+   "after": 0.25
+  },
+  {
+   "id": "disc2",
+   "text": "Esse é o disco.",
+   "after": 0.43
+  },
+  {
+   "id": "pads1",
+   "text": "Mas um disco girando sozinho não segura nada.",
+   "after": 0.25
+  },
+  {
+   "id": "pads2",
+   "text": "Então você aperta ele dos dois lados com duas placas ásperas.",
+   "after": 0.25
+  },
+  {
+   "id": "pads3",
+   "text": "Essas são as pastilhas.",
+   "after": 0.43
+  },
+  {
+   "id": "fluid1",
+   "text": "Mas o seu pé está no pedal, longe da roda.",
+   "after": 0.25
+  },
+  {
+   "id": "fluid2",
+   "text": "Então você liga o pedal a um tubo cheio de óleo.",
+   "after": 0.25
+  },
+  {
+   "id": "fluid3",
+   "text": "Óleo não se comprime: o que entra de um lado sai do outro.",
+   "after": 0.25
+  },
+  {
+   "id": "fluid4",
+   "text": "Esse é o fluido de freio.",
+   "after": 0.43
+  },
+  {
+   "id": "caliper1",
+   "text": "Lá na roda, o óleo empurra um pistão bem mais largo, que espreme as pastilhas com muito mais força do que o seu pé fez.",
+   "after": 0.25
+  },
+  {
+   "id": "caliper2",
+   "text": "Essa é a pinça.",
+   "after": 0.43
+  },
+  {
+   "id": "vented1",
+   "text": "Mas o atrito vira calor, e um disco quente demais freia mal.",
+   "after": 0.25
+  },
+  {
+   "id": "vented2",
+   "text": "Então você abre canais no meio dele, por onde o ar passa e esfria.",
+   "after": 0.25
+  },
+  {
+   "id": "vented3",
+   "text": "Esse é o disco ventilado.",
+   "after": 0.43
+  },
+  {
+   "id": "abs1",
+   "text": "Mas, se você pisa com tudo, a roda trava e o carro desliza sem direção.",
+   "after": 0.25
+  },
+  {
+   "id": "abs2",
+   "text": "Então um sensor vigia um anel dentado na roda e, se ela travar, alivia a pressão várias vezes por segundo.",
+   "after": 0.25
+  },
+  {
+   "id": "abs3",
+   "text": "Esse é o ABS.",
+   "after": 0.9
+  },
+  {
+   "id": "end1",
+   "text": "Agora é só pisar.",
+   "after": 0.25
+  },
+  {
+   "id": "end2",
+   "text": "Pronto: você montou um freio a disco.",
+   "after": 0.25
+  }
+ ]
+}

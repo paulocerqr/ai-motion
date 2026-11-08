@@ -1,0 +1,10 @@
+{
+  "name": "freio-disco",
+  "title": "Freio a disco",
+  "format": { "width": 1080, "height": 1920, "fps": 30 },
+  "storyFormat": "cumulative build, voice-led (problem -> fix -> 'Esse é o X'), low-poly 3D",
+  "style": "lowpoly3d",
+  "voice": { "file": "voice/voice.wav", "music": -18 },
+  "review": { "safe": { "top": 240, "bottom": 420, "right": 140 }, "refs": {} },
+  "build": ["src/head.html", "kit/core.js", "vendor/three.min.js", "style", "src/world.js", "src/scenes.js", "src/render.js", "kit/board.js", "kit/score-head.js", "src/score.js", "kit/score-tail.js"]
+}

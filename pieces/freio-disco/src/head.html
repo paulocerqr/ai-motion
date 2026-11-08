@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Freio a disco</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #16161a; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas#c { height: min(100vh, calc(100vw * 16 / 9)); width: auto; aspect-ratio: 9 / 16; display: block; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+"use strict";
+// =====================================================================
+//  FREIO A DISCO — 9:16, narrated, low-poly 3D (three.js). Format: cumulative build
+//  (problem -> fix -> "Esse é o X"): one wheel on a rolling road gains a part per beat.
+//  The voice is the clock: every cue comes from VOICE word times.
+// =====================================================================
+const FPS = 30, W = 1080, H = 1920;
+const BPM = 112, BEAT = 60 / BPM, E8 = BEAT / 2, E16 = BEAT / 4;
+const NFRAMES = Math.round(VOICE.duration * FPS);
+const DURATION = NFRAMES / FPS;
+const LOOP_T = DURATION;
+const SAFE = { top: 240, bottom: 420, right: 140 };
+const HAND = '"Fira Sans", Arial, sans-serif';
+const CX = (W - SAFE.right) / 2 + 10;   // centred clear of the phone UI on the right
+
+// ---- the voice: VL(id) a line, VW(id, word, n) when the n-th `word` of that line starts
+const VL = (id) => VOICE.lines.find((l) => l.id === id);
+const _nw = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, '');
+function VW(id, word, n = 1) {
+  const L = VL(id); let k = 0;
+  for (const w of L.words || []) if (_nw(w.w) === _nw(word) && ++k === n) return Math.max(L.t0 - 0.1, w.t0);
+  return L.t0;
+}
+const snapE8 = (t) => Math.round(t / E8) * E8;
+
+// ---- cues (seconds), all from the voice
+const CU = {
+  energy: VW('energy1', 'energia'), lugar: VW('energy2', 'lugar'),
+  cut: snapE8(VL('disc1').t0 - 0.05),
+  roda: VW('disc1', 'roda'), disco: VW('disc1', 'disco'), gira: VW('disc1', 'gira'),
+  nDisc: VL('disc2').t0,
+  sozinho: VW('pads1', 'sozinho'), aperta: VW('pads2', 'aperta'), lados: VW('pads2', 'lados'), placas: VW('pads2', 'placas'),
+  nPads: VL('pads3').t0,
+  pe: VW('fluid1', 'pe'), pedal: VW('fluid1', 'pedal'), tubo: VW('fluid2', 'tubo'), oleo: VW('fluid2', 'oleo'),
+  entra: VW('fluid3', 'entra'), sai: VW('fluid3', 'sai'),
+  nFluid: VL('fluid4').t0,
+  empurra: VW('caliper1', 'empurra'), pistao: VW('caliper1', 'pistao'), largo: VW('caliper1', 'largo'), espreme: VW('caliper1', 'espreme'), forca: VW('caliper1', 'forca'),
+  nCaliper: VL('caliper2').t0,
+  atrito: VW('vented1', 'atrito'), calor: VW('vented1', 'calor'), mal: VW('vented1', 'mal'),
+  canais: VW('vented2', 'canais'), ar: VW('vented2', 'ar'), esfria: VW('vented2', 'esfria'),
+  nVented: VL('vented3').t0,
+  pisa: VW('abs1', 'pisa'), trava: VW('abs1', 'trava'), desliza: VW('abs1', 'desliza'),
+  sensor: VW('abs2', 'sensor'), anel: VW('abs2', 'anel'), alivia: VW('abs2', 'alivia'), vezes: VW('abs2', 'vezes'),
+  nAbs: VL('abs3').t0,
+  hush: VL('abs3').t1 + 0.12,
+  pisar: VW('end1', 'pisar'), pronto: VL('end2').t0, freio: VW('end2', 'freio'),
+};
+CU.stop = CU.pronto - 0.35;
+CU.cutLock = snapE8(CU.trava - 0.05);   // peak: hard cut to the tyre on the road
+CU.cutSensor = snapE8(CU.sensor - 0.3); // and to the sensor   // the payoff: the wheel stops dead, in the pause before "Pronto"
+
+// the titles: a part is named -> its name stays up until the next problem starts
+const TITLES = [
+  [CU.nDisc, VL('pads1').t0, 'DISCO'],
+  [CU.nPads, VL('fluid1').t0, 'PASTILHAS'],
+  [CU.nFluid, VL('caliper1').t0, 'FLUIDO DE FREIO'],
+  [CU.nCaliper, VL('vented1').t0, 'PINÇA'],
+  [CU.nVented, VL('abs1').t0, 'DISCO VENTILADO'],
+  [CU.nAbs, CU.hush, 'ABS'],
+  [CU.freio, DURATION, 'FREIO A DISCO'],
+];
+
+const SHOTS = [
+  ['car', 0, CU.cut, 'um carro a 100 km/h'],
+  ['disc', CU.cut, VL('pads1').t0, 'o disco na roda'],
+  ['pads', VL('pads1').t0, VL('fluid1').t0, 'as pastilhas'],
+  ['fluid', VL('fluid1').t0, VL('caliper1').t0, 'pedal + óleo'],
+  ['caliper', VL('caliper1').t0, VL('vented1').t0, 'a pinça'],
+  ['vented', VL('vented1').t0, VL('abs1').t0, 'calor + ventilado'],
+  ['abs', VL('abs1').t0, CU.cutLock, 'pisa com tudo'],
+  ['lock', CU.cutLock, CU.cutSensor, 'roda trava, fumaça'],
+  ['sensor', CU.cutSensor, CU.hush, 'sensor + ABS'],
+  ['end', CU.hush, DURATION, 'pisar: para certinho'],
+];
+const TIMELINE = {
+  width: W, height: H, fps: FPS, bpm: BPM, duration: DURATION, frames: NFRAMES, loop: LOOP_T, safe: SAFE,
+  format: 'cumulative build', gpu: true,
+  shots: SHOTS.map(([key, t0, t1, title], i) => ({ id: i + 1, key, era: 0, t0, t1, title })),
+  cuts: [CU.cut, CU.cutLock, CU.cutSensor],
+  morphs: [],
+  cues: CU,
+  acts: [
+    { name: '1 Disco + pastilhas', role: 'build',   t0: 0, t1: VL('fluid1').t0 },
+    { name: '2 Óleo, pinça, calor', role: 'journey', t0: VL('fluid1').t0, t1: VL('abs1').t0 },
+    { name: '3 A roda trava',      role: 'peak',    t0: VL('abs1').t0, t1: CU.hush },
+    { name: '4 Silêncio',          role: 'silence', t0: CU.hush, t1: VL('end1').t0 },
+    { name: '5 Pisar: para',       role: 'gift',    t0: VL('end1').t0, t1: VL('end2').t1 + 0.6 },
+    { name: '6 Fim',               role: 'goodbye', t0: VL('end2').t1 + 0.6, t1: DURATION },
+  ],
+  board: [
+    { t: CU.energy + 0.3, title: 'carro a 100 km/h', sound: 'motor + vento', next: 'câmera entra na roda' },
+    { t: CU.nDisc + 0.4, title: 'o disco gira com a roda', sound: 'clunk + pluck', next: 'pastilhas chegam' },
+    { t: CU.nPads + 0.3, title: 'pastilhas apertam o disco', sound: 'chiado', next: 'pedal' },
+    { t: CU.sai + 0.6, title: 'pedal empurra o óleo no tubo', sound: 'gorgolejo', next: 'pinça' },
+    { t: CU.forca + 0.3, title: 'pinça: pistão largo, força grande', sound: 'clunk pesado', next: 'calor' },
+    { t: CU.mal + 0.3, title: 'disco em brasa', sound: 'chiado quente', next: 'canais de ar' },
+    { t: CU.esfria + 0.4, title: 'ar passa pelos canais', sound: 'whoosh', next: 'pisa com tudo' },
+    { t: CU.desliza + 0.4, title: 'roda trava, fumaça', sound: 'pneu cantando', next: 'sensor' },
+    { t: CU.vezes + 0.3, title: 'ABS pulsa', sound: 'tique-tique', next: 'silêncio' },
+    { t: CU.freio + 0.8, title: 'para certinho: FREIO A DISCO', sound: 'acorde + impacto (o mais alto)', next: 'fim' },
+  ],
+  narration: VOICE.lines.map((l) => ({ t0: l.t0, t1: l.t1, text: l.text })),
+};
+window.TIMELINE = TIMELINE;
