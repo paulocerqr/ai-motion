@@ -1,6 +1,6 @@
 # ai-motion
 
-Vídeos curtos explicativos (9:16, em português) feitos **inteiramente em código**. Cada quadro é desenhado de forma procedural num `<canvas>`, em 2D ou em 3D com three.js. A trilha e os efeitos sonoros são sintetizados. A narração usa a minha voz clonada na Cartesia, e as legendas acendem palavra por palavra.
+Vídeos curtos explicativos (9:16, em português) feitos **inteiramente em código**. Cada quadro é desenhado de forma procedural num `<canvas>`, em 2D ou em 3D com three.js. A trilha e os efeitos sonoros são sintetizados. A narração usa uma voz clonada na Cartesia, e as legendas acendem palavra por palavra.
 
 O fluxo usa a skill [`animate`](https://github.com/cth9191/animate) (licença MIT) para o Claude Code, com ajustes locais. As etapas são: roteiro → aprovação → look → storyboard → animação → exportação para MP4 → revisão automática.
 
